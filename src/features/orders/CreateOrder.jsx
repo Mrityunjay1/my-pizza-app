@@ -18,24 +18,29 @@ const isValidPhone = (str) =>
   );
 
 function CreateOrder() {
+  const [withPriority, setWithPriority] = useState(false);
   const {
     user,
     status: addressStatus,
     position,
-    address,error:errorAddress
+    address,
+    error: errorAddress,
   } = useSelector((state) => state.user);
+  const isLoadingAddress = addressStatus === "loading";
   const navigation = useNavigation();
   const isSubmitting = navigation.state === "submitting";
+  const formErrors = useActionData();
   const dispatch = useDispatch();
 
-  const formErrors = useActionData();
-  const [withPriority, setWithPriority] = useState(false);
-  const priorityPrice = withPriority ? totalCartPrice * 0.3 : 0;
+ 
+ 
+  
   const cart = useSelector(getCart);
   const totalCartPrice = useSelector(getTotalCartPrice);
+  const priorityPrice = withPriority ? totalCartPrice * 0.3 : 0;
   const totalPrice = totalCartPrice + priorityPrice;
 
-  const isLoadingAddress = addressStatus === "loading";
+ 
 
   if (!cart.length) return <EmptyCart />;
   return (
@@ -75,12 +80,12 @@ function CreateOrder() {
               className="input w-full"
               defaultValue={address}
             />
-            {addressStatus === 'error' && (
-            <p className="mt-2 text-xs  text-red-500">{errorAddress}</p>
-          )}
+            {addressStatus === "error" && (
+              <p className="mt-2 text-xs  text-red-500">{errorAddress}</p>
+            )}
           </div>
           {!position.latitute && !position.longitude && (
-            <span className="absolute right-[3px] top-[3px] md:top-[5px] md:right-[5px] z-50">
+            <span className="absolute right-[3px] top-[3px] z-50 md:right-[5px] md:top-[5px]">
               <Button
                 type="small"
                 onClick={(e) => {
@@ -111,7 +116,15 @@ function CreateOrder() {
 
         <div>
           <input type="hidden" name="cart" value={JSON.stringify(cart)} />
-          <input type="hidden" name='position' value={position.longitude && position.latitude ? `${position.latitute},${position.longitude}`: ''} />
+          <input
+            type="hidden"
+            name="position"
+            value={
+              position.longitude && position.latitude
+                ? `${position.latitute},${position.longitude}`
+                : ""
+            }
+          />
           <Button disabled={isSubmitting || isLoadingAddress} type="primary">
             {isSubmitting
               ? "Placing Order..."
