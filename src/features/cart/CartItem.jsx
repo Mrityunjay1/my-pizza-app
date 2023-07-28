@@ -1,10 +1,16 @@
 /* eslint-disable no-unused-vars */
 /* eslint-disable react/prop-types */
-import Button from "../../ui/Button";
+
+import { useSelector } from "react-redux";
 import { formatCurrency } from "../../utils/helpers";
+import DeleteItem from "./DeleteItem";
+import UpdateItemQty from "./UpdateItemQty";
+import { getCurrentQtyById } from "./cartSlice";
 
 function CartItem({ item }) {
   const { pizzaId, name, quantity, totalPrice } = item;
+
+  const currentQty= useSelector(getCurrentQtyById(pizzaId))
 
   return (
     <li className="py-3 sm:flex sm:items-center sm:justify-between ">
@@ -13,7 +19,8 @@ function CartItem({ item }) {
       </p>
       <div className="flex items-center sm:gap-6">
         <p className="text-sm font-bold">{formatCurrency(totalPrice)}</p>
-        <Button type='small'>Delete</Button>
+        <UpdateItemQty pizzaId={pizzaId} currentQty={currentQty} />
+        <DeleteItem pizzaId={pizzaId} />
       </div>
     </li>
   );
